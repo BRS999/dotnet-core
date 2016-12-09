@@ -1,0 +1,37 @@
+image: microsoft/dotnet:latest
+stages:
+    - build
+    - test
+    - docker
+    - deploy
+build:
+    stage: build
+    script: 
+    - cd src/
+    - dotnet restore
+    - dotnet build
+test:
+    stage: test
+    script:
+    - cd test/
+    - dotnet restore
+    - dotnet test
+    
+build docker image:
+  image: docker:git
+  stage: docker
+  services:
+  - docker:dind
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    - docker build -t registry.gitlab.com/brs999/dotnet .
+    - docker push registry.gitlab.com/brs999/dotnet:latest
+  only:
+    - master
+    
+deploy to production:
+  stage: deploy
+  script: curl -I http://columbia-demo.azurewebsites.net
+  environment: production
+  only:
+    - master
