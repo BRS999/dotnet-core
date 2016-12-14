@@ -24,14 +24,14 @@ build docker image:
   - docker:dind
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
-    - docker build -t registry.gitlab.com/brs999/dotnet .
-    - docker push registry.gitlab.com/brs999/dotnet:latest
+    - docker build -t registry.gitlab.com/brs999/dotnet-core .
+    - docker push registry.gitlab.com/brs999/dotnet-core:latest
   only:
     - master
     
 deploy to production:
   stage: deploy
-  script: curl -I http://columbia-demo.azurewebsites.net
+  script: curl -I http://dotnet-demo.azurewebsites.net
   environment: production
   only:
     - master
